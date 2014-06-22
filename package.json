@@ -1,0 +1,27 @@
+{
+  "name": "wxchat",
+  "version": "0.0.6",
+  "description": "微信公共平台接口封装",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Johnqing/wxchat.git"
+  },
+  "keywords": [
+    "weixin",
+    "wxchat"
+  ],
+  "dependencies": {
+       "ejs": "*",
+       "xml2js": "*"
+  },
+  "devDependencies": {
+
+  },
+  "author": "John Qing",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "directories": {
+    "test": "test"
+  }
+}
