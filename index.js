@@ -21,26 +21,47 @@ function WX(token){
  * @returns {*}
  */
 WX.prototype.checkSign = function(req, res){
-	if(req.method === 'GET')
-		return checkSign(this.token, req, res);
+	var valid = checkSign(this.token, req);
+	// 签名错误返回
+	if(!valid.isSign){
+		res.writeHead(401);
+		res.end('Invalid signature');
+		return;
+	}
+	if(req.method !== 'GET') return this;
+	res.writeHead(200, {'Content-Type': 'text/plain'});
+	res.end(valid.echostr);
+	return this;
 }
 // 初始化
-WX.prototype.init = function(req, res){
-	var self = this;
-	self.res = res;
-	var data = '';
-	req.setEncoding('utf8');
-	req.on('data', function(chunk){
-		data += chunk;
-	});
+WX.prototype.middlewarify = function(req, res){
+	this.res = res;
+	this.checkSign(req, res);
+	var method = req.method;
+	if(method === 'POST'){
+		var self = this;
+		var xml = '';
 
-	req.on('end', function(){
-		self.toJSON(data);
-	});
+		req.setEncoding('utf8');
+		req.on('data', function(chunk){
+			xml += chunk;
+		});
+		req.on('end', function(){
+			self.toJSON(xml);
+		});
+		return;
+	}
 
+	if(method === 'GET') return;
 };
-
-['text', 'image', 'voice', 'video', 'location', 'link', 'event'].forEach(function(name){
+// 监听函数
+function eventBind(fn){
+	['text', 'image', 'voice', 'video', 'location', 'link', 'event'].forEach(function(name){
+		fn && fn(name);
+	});
+}
+// 监听单个事件
+eventBind(function(name){
 	WX.prototype[name] = function(fn){
 		emitter.on(name, fn);
 		return this;
@@ -48,14 +69,9 @@ WX.prototype.init = function(req, res){
 });
 // 监听所有信息
 WX.prototype.all = function(fn){
-	emitter.on("text", fn);
-	emitter.on("image", fn);
-	emitter.on("location", fn);
-	emitter.on("link", fn);
-	emitter.on("event", fn);
-	emitter.on("voice", fn);
-	emitter.on("video", fn);
-
+	eventBind(function(name){
+		emitter.on(name, fn);
+	});
 	return this;
 }
 
@@ -67,7 +83,10 @@ WX.prototype.toJSON = function(data){
 // 消息回复
 WX.prototype.send = function(data){
 	this.res.writeHead(200, {'Content-Type': 'text/plain'});
-	this.end(toXML(data));
+	// 不传入，默认为 text
+	data.msgType = data.msgType || 'text';
+	var XML = this.toXML(data);
+	this.res.end(XML);
 	return this;
 }
 
