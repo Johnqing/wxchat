@@ -53,10 +53,11 @@ WX.prototype.middlewarify = function(req, res){
 	}
 
 	if(method === 'GET') return;
+
 };
 // 监听函数
 function eventBind(fn){
-	['text', 'image', 'voice', 'video', 'location', 'link', 'event'].forEach(function(name){
+	['text', 'image', 'voice', 'video', 'location', 'link', 'subscribe', 'unsubscribe', 'click'].forEach(function(name){
 		fn && fn(name);
 	});
 }

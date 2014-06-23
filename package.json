@@ -1,6 +1,6 @@
 {
   "name": "wxchat",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "微信公共平台接口封装",
   "main": "index.js",
   "repository": {
