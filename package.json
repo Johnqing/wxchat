@@ -13,7 +13,8 @@
   ],
   "dependencies": {
     "ejs": "*",
-    "xml2js": "*"
+    "xml2js": "*",
+    "urllib": "*"
   },
   "devDependencies": {},
   "author": {

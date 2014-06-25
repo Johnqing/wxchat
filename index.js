@@ -4,6 +4,8 @@ var events = require('events'),
 var toXML = require('./lib/toXML');
 var toJSON = require('./lib/toJSON');
 var checkSign = require('./lib/checkSign');
+var util = require('./lib/util');
+var oauth = require('./lib/oauth');
 
 /**
  * 基础类
@@ -91,6 +93,7 @@ WX.prototype.send = function(data){
 	return this;
 }
 
+util.extend(WX.prototype, oauth);
 // 接口
 module.exports = function(token){
 	return new WX(token);
